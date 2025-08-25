@@ -1,1 +1,1 @@
-# GenAI
+# GM-HSE-AI-masters-course
