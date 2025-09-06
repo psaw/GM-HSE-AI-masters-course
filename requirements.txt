@@ -1,0 +1,10 @@
+ipykernel==6.30.1
+ipython==8.37.0
+jupyter_client==8.6.3
+jupyter_core==5.8.1
+matplotlib==3.10.6
+matplotlib-inline==0.1.7
+numpy==2.2.6
+torch==2.8.0
+torchvision==0.23.0
+tqdm==4.67.1
