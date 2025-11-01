@@ -1,5 +1,7 @@
 #!/bin/bash
 
+yc config profile activate prod
+
 # Константы
 VM_ID="fhmcts6gt5k6bmsvfdl9"
 SECURITY_GROUP_ID="enpl8ref208ejb00pdh5"
@@ -59,6 +61,21 @@ get_current_ip() {
     fi
 }
 
+# Функция для получения и вывода публичного IP виртуальной машины
+show_vm_ip() {
+    log "Получение публичного IP виртуальной машины..."
+    local vm_ip=$(yc compute instance get $VM_ID --format json 2>/dev/null | grep -A 10 "one_to_one_nat" | grep "address" | head -n 1 | awk -F'"' '{print $4}')
+    
+    if [ -n "$vm_ip" ]; then
+        echo -e "${BLUE}┌─────────────────────────────────────────┐${NC}"
+        echo -e "${BLUE}│${NC} Публичный IP виртуальной машины:        ${BLUE}│${NC}"
+        echo -e "${BLUE}│${NC} ${GREEN}${vm_ip}${NC}$(printf '%*s' $((37 - ${#vm_ip})) '')   ${BLUE}│${NC}"
+        echo -e "${BLUE}└─────────────────────────────────────────┘${NC}"
+    else
+        warning "Не удалось получить публичный IP виртуальной машины (возможно, ВМ остановлена или нет внешнего IP)"
+    fi
+}
+
 # Функция для запуска виртуальной машины
 start_vm() {
     log "Запуск виртуальной машины $VM_ID..."
@@ -68,6 +85,7 @@ start_vm() {
     
     if [ "$status" = "RUNNING" ]; then
         warning "Виртуальная машина уже запущена"
+        show_vm_ip
         return 0
     fi
     
@@ -81,6 +99,7 @@ start_vm() {
             sleep 2
         done
         log "ВМ полностью запущена"
+        show_vm_ip
     else
         error "Не удалось запустить виртуальную машину"
         return 1
@@ -136,6 +155,7 @@ update_security_group() {
     local current_date=$(date -Iseconds)
     if yc vpc security-group update-rules $SECURITY_GROUP_ID --add-rule "description=SSH-$current_date,direction=ingress,protocol=tcp,to-port=22,from-port=22,v4-cidrs=$cidr" --no-user-output; then
         log "Группа безопасности успешно обновлена с IP $cidr"
+        show_vm_ip
     else
         error "Не удалось обновить группу безопасности"
         return 1
@@ -198,6 +218,7 @@ main() {
                 ;;
             -i|--ip)
                 get_current_ip
+                show_vm_ip
                 shift
                 ;;
             -u|--update-sg)
