@@ -1,0 +1,5 @@
+{
+    "ruff.interpreter": [
+        "/home/yc-user/GM-HSE-AI-masters-course/.venv/bin/python3"
+    ]
+}

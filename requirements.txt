@@ -15,3 +15,11 @@ requests
 python-dotenv
 pandas
 scikit-learn
+kaggle
+datasets
+diffusers
+accelerate
+rich
+rich[jupyter]
+pytorch_lightning
+lpips
