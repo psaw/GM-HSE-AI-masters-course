@@ -1,5 +1,5 @@
 {
     "ruff.interpreter": [
-        "/home/yc-user/GM-HSE-AI-masters-course/.venv/bin/python3"
+        "${workspaceFolder}/.venv/bin/python3"
     ]
 }
